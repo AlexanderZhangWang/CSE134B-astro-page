@@ -1,8 +1,7 @@
 ---
 title: "My Astro Post"
-description: "Brief summary for post 1."
+description: "Brief summary for post 5."
 publishDate: "2025-04-01"
 layout: "../../components/Layout.astro"
 ---
-# Hello from Astro Post 1
-
+# Hello from Astro Post 5

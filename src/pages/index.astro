@@ -1,14 +1,68 @@
 ---
 import Layout from '../components/Layout.astro';
+
+const postImports = import.meta.glob('./posts/*.md');
+
+const posts = await Promise.all(
+  Object.entries(postImports).map(async ([path, resolver]) => {
+    const mod = await resolver(); 
+    return {
+      url: path
+        .replace('./posts', '/posts')  
+        .replace('.md', ''),          
+      ...mod.frontmatter,           
+    };
+  })
+);
 ---
+
+
 <Layout title="Home">
 	<h2>Welcome to the Astro Landing Page</h2>
-	<p>
-		Here is my first post:
-		<a href="/posts/post1">Go to Post 1</a>
-	</p>
-	<p>
-		Here is my second post:
-		<a href="/posts/post2">Go to Post 2</a>
-	</p>
+	
+	<div class="posts-container">
+		{posts.map(post => (
+		<div class="post-card">
+			<h3>{post.title}</h3>
+			<p>{post.description}</p>
+			<p><small>Published: {post.publishDate}</small></p>
+			<a href={post.url}>Read More</a>
+		</div>
+		))}
+	</div>
 </Layout>
+
+	<style>
+	.posts-container {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr); 
+		gap: 1rem; 
+		margin-top: 1.5rem;
+	}
+
+	.post-card {
+		border: 1px solid #ccc;
+		padding: 1rem;
+		border-radius: 6px;
+	}
+
+	.post-card h3 {
+		margin-top: 0;
+	}
+
+	.post-card a {
+		display: inline-block;
+		margin-top: 0.5rem;
+		text-decoration: none;
+		color: blue;
+	}
+	.post-card a:hover {
+		text-decoration: underline;
+	}
+
+	@media (max-width: 600px) {
+		.posts-container {
+		grid-template-columns: 1fr; /* single column */
+		}
+	}
+	</style>
